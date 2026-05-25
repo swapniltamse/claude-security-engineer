@@ -70,7 +70,7 @@ The query must filter by both user_id AND the authenticated user's id:
 
     user = User.query.filter_by(
         id=user_id,
-        id=current_user.id
+        owner_id=current_user.id
     ).first_or_404()
 
 Adding the endpoint as written introduces a broken access control vulnerability (OWASP A01).
