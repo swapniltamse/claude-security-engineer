@@ -136,7 +136,8 @@ To run all 10 checks before a feature ships:
 Produces a gate report with CLEAR / BLOCKED status for each check. Any BLOCKED item must be resolved before the feature ships.
 
 ## Built by
-Swapnil Tamse — Engineering Leader, AI/AI Security, NYC
+[Swapnil Tamse](https://swapniltamse.com) — Engineering Leader, AI/AI Security, NYC
+[LinkedIn](https://www.linkedin.com/in/swapniltamse)
 Companion to: [claude-staff-engineer](https://github.com/swapniltamse/claude-staff-engineer)
 
 ## License
