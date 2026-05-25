@@ -12,6 +12,10 @@ AI agents generate working code. They don't generate secure code. Left unconstra
 
 None of this shows up until an incident. This pack intercepts those patterns before the code is written.
 
+## What skills are
+
+Skills are custom prompt instructions stored in `.claude/skills/`. Claude Code loads a skill's instructions into the agent's context when the trigger condition is met. If the trigger never fires, the skill adds zero tokens to the conversation.
+
 ## Context window and cost
 
 Skills are lazy-loaded. A skill file sits on disk until its trigger condition is met. Most prompts load zero security skills. When triggered, each skill adds roughly 500 tokens. At current Sonnet pricing that is fractions of a cent. You control what you install.
@@ -76,7 +80,24 @@ The query must filter by both user_id AND the authenticated user's id:
 Adding the endpoint as written introduces a broken access control vulnerability (OWASP A01).
 ```
 
+## Overriding a BLOCKED verdict
+
+A BLOCKED verdict is a checkpoint, not a hard lock. The agent surfaces the risk and waits. You decide.
+
+To override, tell the agent explicitly what you know:
+
+```
+The user table has no owner_id column — this is an internal admin endpoint,
+only reachable by service accounts. Proceed with the original query.
+```
+
+The agent will document your rationale and continue. This keeps the override visible in the conversation log rather than silently bypassing the check.
+
+False positives are expected in test and local development contexts. The skills are designed for pre-ship review, not every prompt. If a skill fires too aggressively in your workflow, remove it from `.claude/skills/` in that project.
+
 ## Install
+
+Skills install per project. They live in the project's `.claude/skills/` directory and do not affect your global Claude Code setup or any other project.
 
 No existing `.claude` folder:
 
@@ -84,13 +105,13 @@ No existing `.claude` folder:
 cp -r .claude /path/to/your/project/
 ```
 
-Already using Claude Code:
+Already using Claude Code with your own `.claude` config:
 
 ```bash
 rsync -av .claude/skills/ /path/to/your/project/.claude/skills/
 ```
 
-Claude Code picks up skills from `.claude/skills/` automatically.
+The rsync command merges the skill files without overwriting anything you already have.
 
 ## Where to start
 
