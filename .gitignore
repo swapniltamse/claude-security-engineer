@@ -1,3 +1,8 @@
 .DS_Store
 *.pyc
 __pycache__/
+
+# Skill manager artifacts (user-local, not part of this repo)
+.agents/
+skills-lock.json
+.claude/skills/caveman/
