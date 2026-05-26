@@ -99,19 +99,19 @@ False positives are expected in test and local development contexts. The skills 
 
 Skills install per project. They live in the project's `.claude/skills/` directory and do not affect your global Claude Code setup or any other project.
 
-No existing `.claude` folder:
+Run this in your project directory:
 
+**Mac / Linux:**
 ```bash
-cp -r .claude /path/to/your/project/
+git clone https://github.com/swapniltamse/claude-security-engineer /tmp/cse && mkdir -p .claude/skills && cp -r /tmp/cse/.claude/skills/. .claude/skills/
 ```
 
-Already using Claude Code with your own `.claude` config:
-
-```bash
-rsync -av .claude/skills/ /path/to/your/project/.claude/skills/
+**Windows (PowerShell):**
+```powershell
+git clone https://github.com/swapniltamse/claude-security-engineer $env:TEMP\cse; mkdir -Force .claude\skills; Copy-Item -Recurse $env:TEMP\cse\.claude\skills\* .claude\skills\
 ```
 
-The rsync command merges the skill files without overwriting anything you already have.
+Merges into your existing `.claude` setup without overwriting anything.
 
 ## Where to start
 
