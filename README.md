@@ -12,29 +12,51 @@ AI agents generate working code. They don't generate secure code. Left unconstra
 
 None of this shows up until an incident. This pack intercepts those patterns before the code is written.
 
-## What skills are
+## How to use
 
-Skills are custom prompt instructions stored in `.claude/skills/`. Claude Code loads a skill's instructions into the agent's context when the trigger condition is met. If the trigger never fires, the skill adds zero tokens to the conversation.
+Each skill is a slash command. Type it before you ask the agent to write the relevant code.
 
-## Context window and cost
+```
+/broken-access-control
+Add a user profile endpoint that fetches a record by ID.
+```
 
-Skills are lazy-loaded. A skill file sits on disk until its trigger condition is met. Most prompts load zero security skills. When triggered, each skill adds roughly 500 tokens. At current Sonnet pricing that is fractions of a cent. You control what you install.
+The skill loads into the conversation and the agent runs its check before writing anything.
+
+You can also invoke skills mid-conversation if you realize you're about to touch a sensitive area:
+
+```
+/injection-check
+Now add the search filter to that query.
+```
+
+To run all 10 checks at once before shipping a feature:
+
+```
+/owasp-security-gate
+```
 
 ## Skills
 
-| Skill name | OWASP | What it checks | Trigger |
-|---|---|---|---|
-| `broken-access-control` | A01 | IDOR patterns, missing ownership checks, client-side auth logic | routes, endpoints, data access layers |
-| `cryptographic-failures` | A02 | Password hashing algorithm, encryption at rest/transit, hardcoded secrets, weak algos | password/PII/token storage or transmission |
-| `injection-check` | A03 | SQL concatenation, shell command injection, XSS, LDAP injection | queries, shell commands, HTML rendering |
-| `insecure-design` | A04 | Threat model, rate limits, worst-case abuse scenario | new features involving auth, payments, data export, admin, multi-tenant |
-| `security-misconfiguration` | A05 | Debug mode, CORS wildcard, security headers, cloud storage ACLs, default credentials | server config, infra code, deployment scripts |
-| `vulnerable-components` | A06 | CVE status, license compatibility, maintenance health, version pinning | adding/upgrading any dependency |
-| `auth-failures` | A07 | Rate limiting on login, session invalidation, JWT config, account enumeration | login, session, token, password reset, MFA |
-| `data-integrity-failures` | A08 | Unsafe deserialization (pickle), CI pipeline script integrity, lockfile verification | deserialization code, CI pipelines |
-| `security-logging-failures` | A09 | Structured security event logging, required fields, sensitive data in logs | auth flows, authorization checks, admin actions |
-| `ssrf-check` | A10 | Allowlist validation, metadata endpoint blocking, DNS rebinding mitigation | outbound HTTP requests from user-supplied URLs |
-| `owasp-security-gate` | All | Runs all 10 checks in sequence, produces a gate report | before any significant feature ships |
+Each skill maps to one OWASP Top 10 category. Invoke it when you're about to write code in that area.
+
+| Skill | Invoke when you're about to... | OWASP |
+|---|---|---|
+| `/broken-access-control` | Write a route, endpoint, or query that fetches user-specific data | A01 |
+| `/cryptographic-failures` | Store passwords, tokens, or PII — or transmit sensitive data | A02 |
+| `/injection-check` | Write a database query, shell command, or render user input as HTML | A03 |
+| `/insecure-design` | Add a new feature touching auth, payments, data export, admin, or multi-tenant | A04 |
+| `/security-misconfiguration` | Touch server config, environment variables, CORS, headers, or cloud storage | A05 |
+| `/vulnerable-components` | Add or upgrade a dependency | A06 |
+| `/auth-failures` | Build login, logout, session handling, password reset, or MFA | A07 |
+| `/data-integrity-failures` | Deserialize external data, modify a CI pipeline, or change lockfiles | A08 |
+| `/security-logging-failures` | Write auth flows, authorization checks, or admin actions | A09 |
+| `/ssrf-check` | Make an outbound HTTP request using a URL from user input | A10 |
+| `/owasp-security-gate` | Before any significant feature ships | All |
+
+## Context window and cost
+
+Skills are lazy-loaded. A skill file sits on disk until you invoke it. Most prompts load zero security skills. When invoked, each skill adds roughly 500 tokens. At current Sonnet pricing that is fractions of a cent. You control what you install.
 
 ## What it looks like
 
@@ -57,7 +79,8 @@ No comment from the agent. IDOR vulnerability — any logged-in user can fetch a
 **With broken-access-control skill:**
 
 ```
-User: Add a user lookup endpoint that fetches a record by ID.
+User: /broken-access-control
+      Add a user lookup endpoint that fetches a record by ID.
 
 Agent:
 
@@ -127,13 +150,7 @@ Add the other skills as your codebase expands into each risk area. A team shippi
 
 ## Full security review
 
-To run all 10 checks before a feature ships:
-
-```
-/owasp-security-gate
-```
-
-Produces a gate report with CLEAR / BLOCKED status for each check. Any BLOCKED item must be resolved before the feature ships.
+Run `/owasp-security-gate` before any significant feature ships. It runs all 10 checks in sequence and produces a gate report with CLEAR / BLOCKED status per category. Any BLOCKED item must be resolved before the feature ships.
 
 ## Built by
 [Swapnil Tamse](https://swapniltamse.com) — Engineering Leader, AI/AI Security, NYC
