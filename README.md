@@ -12,6 +12,22 @@ AI agents generate working code. They don't generate secure code. Left unconstra
 
 None of this shows up until an incident. This pack intercepts those patterns before the code is written.
 
+## Philosophy
+
+Most security tools in this space run after the code is written. They scan what exists, produce a report, and hand it back. The code already has a shape. The patterns are already set. Findings become negotiation.
+
+This pack works the opposite way.
+
+The parallel is test-driven development. In TDD, you write the test before the implementation. The test defines what "correct" looks like before any code exists to be defensive about. The result is code written to satisfy a constraint, not code retrofitted to pass a check.
+
+These skills apply the same logic to security. Each skill runs before your agent writes anything in that risk area. There is no code yet. No patterns to defend. The agent knows the constraint before it makes a single design decision.
+
+That is not a subtle difference. It changes what gets built.
+
+[`agamm/claude-code-owasp`](https://github.com/agamm/claude-code-owasp) packages OWASP Top 10 as a single skill you invoke after writing. [`trailofbits/skills`](https://github.com/trailofbits/skills) is a professional audit toolkit for security researchers. Both are useful. Neither is designed to intercept the agent before it starts.
+
+This pack is.
+
 ## How to use
 
 Each skill is a slash command. Type it before you ask the agent to write the relevant code.
