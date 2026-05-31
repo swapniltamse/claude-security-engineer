@@ -24,6 +24,10 @@ These skills apply the same logic to security. Each skill runs before your agent
 
 That is not a subtle difference. It changes what gets built.
 
+**What about putting OWASP in the requirements spec?**
+
+That works at project start on a greenfield build. It breaks down in two common situations: existing codebases where you're adding features mid-project, and long sessions where the agent has moved far from the original spec by the time it's writing the tenth endpoint. "Ensure OWASP compliance" in a requirements doc is aspiration. A skill that fires before writing a specific route asks a specific question: does this query verify the caller owns the record before returning it? There is a real difference between a general reminder from hour one and a targeted check at the moment of relevance. That gap between aspiration and specific check is where incidents happen.
+
 [`agamm/claude-code-owasp`](https://github.com/agamm/claude-code-owasp) packages OWASP Top 10 as a single skill you invoke after writing. [`trailofbits/skills`](https://github.com/trailofbits/skills) is a professional audit toolkit for security researchers. Both are useful. Neither is designed to intercept the agent before it starts.
 
 This pack is.
